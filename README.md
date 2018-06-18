@@ -1,3 +1,78 @@
+#Installation
+1. Download files from GitHub repository:
+https://github.com/lm6450/arcade-game-master
+2. Unzip file
+3. Open index.html in a browser window
+
+#Modifications
+1. Used "use strict" for better framerate
+2. Removed the use of determineDx; set var randomPizzas = document.querySelectorAll(".randomPizzaContainer") to avoid code repetition. 
+
+// Iterates through pizza elements on the page and changes their widths
+  function changePizzaSizes(size) {
+    var newwidth;
+      switch(size)  {
+        case "1":
+          newwidth = 25;
+          break;
+        case"2":
+          newwidth = 33.3;
+          break;
+        case"3":
+          newwidth = 50;
+          break;
+        default:
+          console.log("bug in sizeSwitcher");
+      }
+    var randomPizzas = document.querySelectorAll(".randomPizzaContainer");
+    for (var i = 0; i < randomPizzas.length; i++) {
+      // var dx = determineDx(randomPizzas[i], size);
+      // var newwidth = (randomPizzas[i].offsetWidth + dx) + 'px';
+      randomPizzas[i].style.width = newwidth + "%";
+    }
+  }
+
+  changePizzaSizes(size);
+
+3. Moved var pizzasDiv outside of the for loop to avoid doing it on every loop
+
+// This for-loop actually creates and appends all of the pizzas when the page loads
+var pizzasDiv = document.getElementById("randomPizzas");
+for (var i = 2; i < 100; i++) {
+  
+  pizzasDiv.appendChild(pizzaElementGenerator(i));
+}
+
+4. Used an if loop to determine the number of pizzas needed in the backgroung (backPizzas) depending on the size of the screen and related to column width of bootstrap layout
+
+// Generates the sliding pizzas when the page loads.
+document.addEventListener('DOMContentLoaded', function() {
+  var cols = 8;
+  var s = 256;
+    var backPizzas = 0;
+    if (window.innerWidth >= 1200) {
+      backPizzas = 64;
+    } else if (window.innerWidth >= 992){
+      backPizzas = 48;
+    } else if (window.innerWidth >= 768) {
+      backPizzas = 32;
+    } else {
+      backPizzas = 16;
+    }
+
+    for (var i = 0; i < backPizzas; i++) {
+      var elem = document.createElement('img');
+      elem.className = 'mover';
+      elem.src = "images/pizza.png";
+      elem.style.height = "100px";
+      elem.style.width = "73.333px";
+      elem.basicLeft = (i % cols) * s;
+      elem.style.top = (Math.floor(i / cols) * s) + 'px';
+      document.getElementById("movingPizzas1").appendChild(elem);
+    }
+    updatePositions();
+  });
+
 ## Website Performance Optimization portfolio project
 
 Your challenge, if you wish to accept it (and we sure hope you will), is to optimize this online portfolio for speed! In particular, optimize the critical rendering path and make this page render as quickly as possible by applying the techniques you've picked up in the [Critical Rendering Path course](https://www.udacity.com/course/ud884).
