@@ -1,16 +1,12 @@
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
-
 There are two major issues in this code that lead to sub-60fps performance. Can
 you spot and fix both?
-
-
 Built into the code, you'll find a few instances of the User Timing API
 (window.performance), which will be console.log()ing frame rate data into the
 browser console. To learn more about User Timing API, check out:
 http://www.html5rocks.com/en/tutorials/webperformance/usertiming/
-
 Creator:
 Cameron Pittman, Udacity Course Developer
 cameron *at* udacity *dot* com
@@ -424,7 +420,7 @@ var resizePizzas = function(size) {
    // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
   function determineDx (elem, size) {
     var oldWidth = elem.offsetWidth;
-    var windowWidth = document.getElementById("#randomPizzas").offsetWidth; // replaced querySelector with getElementbyId
+    var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
     var oldSize = oldWidth / windowWidth;
 
     // Changes the slider value to a percent width
@@ -449,26 +445,11 @@ var resizePizzas = function(size) {
 
   // Iterates through pizza elements on the page and changes their widths
   function changePizzaSizes(size) {
-    switch(size) {
-      case "1":
-        newWidth = 25;
-        break;
-      case "2":
-        newWidth = 33.3;
-        break;
-      case "3":
-        newWidth = 50;
-        break;
-        default:
-          console.log("bug in sizeSwitcher");
-    }
-
-
-    var randomPizzas = document.getElementById(".randomPizzaContainer");
+    var randomPizzas = document.querySelectorAll(".randomPizzaContainer");
     for (var i = 0; i < randomPizzas.length; i++) {
-      // var dx = determineDx(randomPizzas[i], size);
-      // var newwidth = (randomPizzas[i].offsetWidth + dx) + 'px';
-      randomPizzas[i].style.width = newwidth + "%";
+      var dx = determineDx(randomPizzas[i], size);
+      var newwidth = (randomPizzas[i].offsetWidth + dx) + 'px';
+      randomPizzas[i].style.width = newwidth;
     }
   }
 
@@ -518,10 +499,9 @@ function updatePositions() {
   window.performance.mark("mark_start_frame");
 
   var items = document.querySelectorAll('.mover');
-  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   for (var i = 0; i < items.length; i++) {
     // document.body.scrollTop is no longer supported in Chrome.
-    
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     var phase = Math.sin((scrollTop / 1250) + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
@@ -540,21 +520,22 @@ function updatePositions() {
 window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
+// used an if loop to determine the number of pizzas needed in the backgroung (backPizzas) depending on the size of the screen and related to column width of bootstrap layout
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-    var numPizzas = 0;
-    var windowInnerWidth = window.innerWidth;
-    if (windowInnerWidth >= 1200) {
-      numPizzas = 64;
-    } else if (windowInnerWidth >= 992){
-      numPizzas = 48;
-    } else if (windowInnerWidth >= 768) {
-      numPizzas = 32;
+    var backPizzas = 0;
+    if (window.innerWidth >= 1200) {
+      backPizzas = 64;
+    } else if (window.innerWidth >= 992){
+      backPizzas = 48;
+    } else if (window.innerWidth >= 768) {
+      backPizzas = 32;
     } else {
-      numPizzas = 16;
+      backPizzas = 16;
     }
-    for (var i = 0; i < numPizzas; i++) {
+
+    for (var i = 0; i < backPizzas; i++) {
       var elem = document.createElement('img');
       elem.className = 'mover';
       elem.src = "images/pizza.png";
